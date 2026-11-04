@@ -1,3 +1,4 @@
+local S = core.get_translator(core.get_current_modname())
 --
 -- Formspecs
 --
@@ -59,6 +60,88 @@ local function can_dig(pos, player)
 	return inv:is_empty("fuel") and inv:is_empty("dst") and inv:is_empty("src") and inv:is_empty("vessels")
 end
 
+----------------------------------------------------------------
+-- WATER CONTAINERS
+----------------------------------------------------------------
+
+local jc_special_water_cans = {
+	["jc_special:water_can"] = 15,
+	["jc_special:water_jumbo_can"] = 35,
+	["jc_special:freshwater_can"] = 15,
+}
+
+local water_container_returns = {
+	["claycrafter:glass_of_water"] = {
+		return_item = "vessels:drinking_glass",
+		water = 1,
+	},
+	["farming:glass_water"] = {
+		return_item = "vessels:drinking_glass",
+		water = 1,
+	},
+	["bucket:bucket_water"] = {
+		return_item = "bucket:bucket_empty",
+		water = 4,
+	},
+	["bucket:bucket_river_water"] = {
+		return_item = "bucket:bucket_empty",
+		water = 4,
+	},
+}
+
+local function is_jc_special_water_can(itemstack)
+	return jc_special_water_cans[itemstack:get_name()] ~= nil
+end
+
+local function get_can_level(itemstack)
+	return itemstack:get_meta():get_int("level")
+end
+
+local function get_fuel_time(itemstack)
+	if is_jc_special_water_can(itemstack) then
+		if get_can_level(itemstack) > 0 then
+			return 3
+		end
+
+		return 0
+	end
+
+	local container = water_container_returns[itemstack:get_name()]
+	if container then
+		return container.water * 3
+	end
+
+	return 0
+end
+
+local function consume_can_charge(itemstack)
+	local capacity = jc_special_water_cans[itemstack:get_name()]
+	local level = get_can_level(itemstack)
+
+	if not capacity or level <= 0 then
+		return itemstack
+	end
+
+	level = level - 1
+	itemstack:get_meta():set_int("level", level)
+
+	if level == 0 then
+		itemstack:set_wear(0)
+	else
+		local wear = 65536 - math.floor(level / capacity * 65535)
+
+		if wear > 65535 then
+			wear = 65535
+		elseif wear < 1 then
+			wear = 1
+		end
+
+		itemstack:set_wear(wear)
+	end
+
+	return itemstack
+end
+
 local function allow_metadata_inventory_put(pos, listname, index, stack, player)
 	if core.is_protected(pos, player:get_player_name()) then
 		return 0
@@ -66,7 +149,7 @@ local function allow_metadata_inventory_put(pos, listname, index, stack, player)
 	local meta = core.get_meta(pos)
 	local inv = meta:get_inventory()
 	if listname == "fuel" then -- "Water"
-		if core.get_item_group(stack:get_name(), "h2o") > 0 then
+		if get_fuel_time(stack) > 0 then
 			if inv:is_empty("src") then
 				meta:set_string("infotext", "Claycrafter is empty")
 			end
@@ -125,7 +208,7 @@ core.register_node("claycrafter:claycrafter_active", {
 	description = "Claycrafter",
 	tiles = {
 		"claycrafter_claycrafter_top.png", "claycrafter_claycrafter_bottom.png",
-		"claycrafter_claycrafter_side.png", "claycrafter_claycrafter_side.png",
+		"claycrafter_claycrafter_side.png", "claycrafter_claycrafter_back.png",
 		"claycrafter_claycrafter_side.png",
 		{
 			image = "claycrafter_claycrafter_front_active.png",
@@ -172,7 +255,7 @@ core.register_abm({
 	chance = 1,
 	action = function(pos, node, active_object_count, active_object_count_wider)
 		--
-		-- Inizialize metadata
+		-- Initialize metadata
 		--
 		local meta = core.get_meta(pos)
 		local fuel_time = meta:get_float("fuel_time") or 0
@@ -180,7 +263,7 @@ core.register_abm({
 		local fuel_totaltime = meta:get_float("fuel_totaltime") or 0
 
 		--
-		-- Inizialize inventory
+		-- Initialize inventory
 		--
 		local inv = meta:get_inventory()
 		for listname, size in pairs({
@@ -195,15 +278,12 @@ core.register_abm({
 		end
 		local srclist = inv:get_list("src")
 		local fuellist = inv:get_list("fuel")
-		local dstlist = inv:get_list("dst")
 
 		--
 		-- Cooking
 		--
-
-		local cooktime = core.get_item_group(inv:get_stack("fuel", 1):get_name(), "h2o")
+		local cooktime = 3
 		local cookable = true
-
 
 		if core.get_modpath("moreblocks") ~= nil then
 			if inv:get_stack("src", 1):get_name() ~= "moreblocks:dirt_compressed" then
@@ -218,50 +298,70 @@ core.register_abm({
 		-- Check if we have enough fuel to burn
 		if fuel_time < fuel_totaltime then
 			-- The claycrafter is currently active and has enough fuel
-			fuel_time = fuel_time + 1
-
-			-- If there is a cookable item then check if it is ready yet
 			if cookable then
-				src_time = src_time + 1
-				if src_time >= cooktime then
-					-- Place result in dst list if possible
-					if inv:room_for_item("dst", ItemStack({name = "default:clay", count = 4}))
-					and inv:room_for_item("vessels", ItemStack({name = "vessels:drinking_glass"}))
-					then
-						inv:add_item("dst", {name = "default:clay", count = 4})
+				-- Pause fuel consumption if the output is full.
+				if src_time + 1 >= cooktime and not inv:room_for_item("dst", ItemStack({name = "default:clay", count = 4})) then
+					-- Wait until there is room for the output.
+				else
+					fuel_time = fuel_time + 1
+					src_time = src_time + 1
+
+					if src_time >= cooktime then
+						inv:add_item("dst", ItemStack({name = "default:clay", count = 4}))
 						inv:remove_item("src", inv:get_stack("src", 1):get_name())
 						src_time = 0
-					else
-						swap_node(pos, "claycrafter:claycrafter")
 					end
 				end
+			else
+				fuel_time = fuel_time + 1
 			end
 		else
 			-- Furnace ran out of fuel
 			if cookable and inv:room_for_item("dst", ItemStack({name = "default:clay", count = 4})) then
 				-- We need to get new fuel
-				local fueltime = core.get_item_group(inv:get_stack("fuel", 1):get_name(), "h2o")
+				local fuel_stack = inv:get_stack("fuel", 1)
 
-				if fueltime == 0 then
-					-- No valid fuel in fuel list
-					fuel_totaltime = 0
-					fuel_time = 0
-					src_time = 0
-				else
-					-- Take fuel from fuel list
-					if inv:room_for_item("vessels", ItemStack({name = "vessels:drinking_glass"}))
-					then
-						inv:remove_item("fuel", inv:get_stack("fuel", 1):get_name())
-						inv:add_item("vessels", {name = "vessels:drinking_glass"})
+				if is_jc_special_water_can(fuel_stack) then
+					if get_can_level(fuel_stack) > 0 then
+						-- Consume one charge from the water can.
+						fuel_stack = consume_can_charge(fuel_stack)
+						inv:set_stack("fuel", 1, fuel_stack)
+
+						fuel_totaltime = 3
+						fuel_time = 0
 					else
-						swap_node(pos, "claycrafter:claycrafter_active")
-					end
-					fuel_totaltime = fueltime
-					fuel_time = 0
+						-- Return the empty can to the vessels list.
+						if inv:room_for_item("vessels", fuel_stack) then
+							inv:remove_item("fuel", fuel_stack:get_name())
+							inv:add_item("vessels", fuel_stack)
+						end
 
+						fuel_totaltime = 0
+						fuel_time = 0
+					end
+				else
+					local fueltime = get_fuel_time(fuel_stack)
+
+					if fueltime == 0 then
+						-- No valid fuel in fuel list
+						fuel_totaltime = 0
+						fuel_time = 0
+						src_time = 0
+					else
+						-- Normal water fuel: return its empty container.
+						local container = water_container_returns[fuel_stack:get_name()]
+
+						if container and inv:room_for_item("vessels", ItemStack(container.return_item)) then
+							inv:remove_item("fuel", fuel_stack:get_name())
+							inv:add_item("vessels", ItemStack(container.return_item))
+
+							fuel_totaltime = fueltime
+							fuel_time = 0
+						end
+					end
 				end
-			else
-				-- We don't need to get new fuel since there is no cookable item
+			elseif not cookable then
+				-- No compressed dirt to process.
 				fuel_totaltime = 0
 				fuel_time = 0
 				src_time = 0
@@ -274,8 +374,8 @@ core.register_abm({
 		local formspec = inactive_formspec
 		local item_state = ""
 		local item_percent = 0
-		if cookable then
-			item_percent =  math.floor(src_time / cooktime * 100)
+		if cookable and cooktime > 0 then
+			item_percent = math.floor(src_time / cooktime * 100)
 			item_state = "Yes"
 		else
 			if srclist[1]:is_empty() then
@@ -287,14 +387,14 @@ core.register_abm({
 
 		local fuel_state = "Empty"
 		local active = "inactive "
-		if fuel_time <= fuel_totaltime and fuel_totaltime ~= 0 then
+		if fuel_time < fuel_totaltime and fuel_totaltime ~= 0 then
 			active = "active "
 			local fuel_percent = math.floor(fuel_time / fuel_totaltime * 100)
 			fuel_state = "In use"
 			formspec = active_formspec(fuel_percent, item_percent)
 			swap_node(pos, "claycrafter:claycrafter_active")
 		else
-			if not fuellist[1]:is_empty() then
+			if get_fuel_time(fuellist[1]) > 0 then
 				fuel_state = "Yes"
 			end
 			swap_node(pos, "claycrafter:claycrafter")

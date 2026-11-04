@@ -1,3 +1,4 @@
+local S = core.get_translator(core.get_current_modname())
 --compressed dirt
 local moreblocks = core.get_modpath("moreblocks")
 
