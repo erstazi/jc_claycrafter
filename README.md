@@ -9,7 +9,7 @@ Adds a way for players to obtain clay other than mining, out of a common materia
 
 **Glass of water:** Used as fuel for the Claycrafter. Placeable.
 
-For extra info look at the [Forum Thread](https://forum.Luanti.net/viewtopic.php?f=11&t=13992)
+For extra info look at the [Forum Thread](https://forum.Luanti.org/viewtopic.php?f=11&t=13992)
 
 
 ##### Dependencies:
