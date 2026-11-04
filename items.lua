@@ -3,17 +3,17 @@ local S = core.get_translator(core.get_current_modname())
 local moreblocks = core.get_modpath("moreblocks")
 
 if moreblocks ~= nil then
-	core.register_alias("claycrafter:compressed_dirt","moreblocks:dirt_compressed")
+	core.register_alias("jc_claycrafter:compressed_dirt","moreblocks:dirt_compressed")
 else
 	core.register_craft({
-			output = "claycrafter:compressed_dirt",
+			output = "jc_claycrafter:compressed_dirt",
 			recipe = {
 				{"group:dirt", "group:dirt", "group:dirt"},
 				{"group:dirt", "group:dirt", "group:dirt"},
 				{"group:dirt", "group:dirt", "group:dirt"}
 			}
 	})
-	core.register_node("claycrafter:compressed_dirt", {
+	core.register_node("jc_claycrafter:compressed_dirt", {
 		description = S("Compressed Dirt"),
 		tiles = {"claycrafter_compressed_dirt.png"},
 		groups = {crumbly = 1, oddly_breakable_by_hand = 1, soil = 1, cracky =1},
@@ -21,13 +21,13 @@ else
 	})
 	core.register_craft({
 		output = "default:dirt 9",
-		recipe = {{"claycrafter:compressed_dirt"}}
+		recipe = {{"jc_claycrafter:compressed_dirt"}}
 	})
-	core.register_alias("moreblocks:dirt_compressed","claycrafter:compressed_dirt")
+	core.register_alias("moreblocks:dirt_compressed","jc_claycrafter:compressed_dirt")
 end
 
 --nodes
-core.register_node("claycrafter:glass_of_water", {
+core.register_node("jc_claycrafter:glass_of_water", {
 	description = S("Glass of Water"),
 	drawtype = "plantlike",
 	tiles = {"claycrafter_glass_of_water.png"},
@@ -46,7 +46,7 @@ core.register_node("claycrafter:glass_of_water", {
 
 --recipes
 core.register_craft({
-		output = "claycrafter:glass_of_water 8",
+		output = "jc_claycrafter:glass_of_water 8",
 		recipe = {
 			{"group:vessel", "group:vessel", "group:vessel"},
 			{"group:vessel", "group:water_bucket", "group:vessel"},
@@ -58,7 +58,7 @@ core.register_craft({
 })
 
 core.register_craft({
-		output = "claycrafter:glass_of_water 8",
+		output = "jc_claycrafter:glass_of_water 8",
 		recipe = {
 			{"group:vessel", "group:vessel", "group:vessel"},
 			{"group:vessel", "group:water", "group:vessel"},
@@ -67,7 +67,7 @@ core.register_craft({
 })
 
 core.register_craft({
-		output = "claycrafter:claycrafter",
+		output = "jc_claycrafter:claycrafter",
 		recipe = {
 			{"group:wood", "default:steel_ingot", "group:wood"},
 			{"group:wood", "default:glass", "group:wood"},

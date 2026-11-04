@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Content-Type: text/plain; charset=UTF-8\\n"
 "Content-Transfer-Encoding: 8bit\\n"
-"Project-Id-Version: claycrafter\\n"
+"Project-Id-Version: jc_claycrafter\\n"
 ""Language: nl\\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\\n"
 
@@ -12,11 +12,11 @@ msgstr "Samengeperste aarde"
 msgid "Glass of Water"
 msgstr "Glas water"
 
-msgid "Claycrafter"
-msgstr "Claycrafter"
+msgid "Clay Crafter"
+msgstr "Kleimaker"
 
-msgid "Claycrafter is empty"
-msgstr "De Claycrafter is leeg"
+msgid "Clay Crafter is empty"
+msgstr "De kleimaker is leeg"
 
 msgid "Empty"
 msgstr "Leeg"
@@ -36,6 +36,5 @@ msgstr "inactief"
 msgid "active"
 msgstr "actief"
 
-msgid "Claycrafter @1 (Dirt: @2; Water: @3)"
-msgstr "Claycrafter @1 (Aarde: @2; Water: @3)"
-
+msgid "Clay Crafter @1 (Dirt: @2; Water: @3)"
+msgstr "Kleimaker @1 (Aarde: @2; Water: @3)"

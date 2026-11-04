@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Content-Type: text/plain; charset=UTF-8\\n"
 "Content-Transfer-Encoding: 8bit\\n"
-"Project-Id-Version: claycrafter\\n"
+"Project-Id-Version: jc_claycrafter\\n"
 ""Language: zh_CN\\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\\n"
 
@@ -12,11 +12,11 @@ msgstr "压实泥土"
 msgid "Glass of Water"
 msgstr "一杯水"
 
-msgid "Claycrafter"
-msgstr "Claycrafter"
+msgid "Clay Crafter"
+msgstr "黏土制造机"
 
-msgid "Claycrafter is empty"
-msgstr "Claycrafter 为空"
+msgid "Clay Crafter is empty"
+msgstr "黏土制造机为空"
 
 msgid "Empty"
 msgstr "空"
@@ -36,6 +36,5 @@ msgstr "未激活"
 msgid "active"
 msgstr "已激活"
 
-msgid "Claycrafter @1 (Dirt: @2; Water: @3)"
-msgstr "Claycrafter（@1；泥土：@2；水：@3）"
-
+msgid "Clay Crafter @1 (Dirt: @2; Water: @3)"
+msgstr "黏土制造机（@1；泥土：@2；水：@3）"

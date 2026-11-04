@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Content-Type: text/plain; charset=UTF-8\\n"
 "Content-Transfer-Encoding: 8bit\\n"
-"Project-Id-Version: claycrafter\\n"
+"Project-Id-Version: jc_claycrafter\\n"
 ""Language: ru\\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\\n"
 
@@ -12,11 +12,11 @@ msgstr "Уплотнённая земля"
 msgid "Glass of Water"
 msgstr "Стакан воды"
 
-msgid "Claycrafter"
-msgstr "Claycrafter"
+msgid "Clay Crafter"
+msgstr "Изготовитель глины"
 
-msgid "Claycrafter is empty"
-msgstr "Claycrafter пуст"
+msgid "Clay Crafter is empty"
+msgstr "Изготовитель глины пуст"
 
 msgid "Empty"
 msgstr "Пусто"
@@ -36,6 +36,5 @@ msgstr "неактивен"
 msgid "active"
 msgstr "активен"
 
-msgid "Claycrafter @1 (Dirt: @2; Water: @3)"
-msgstr "Claycrafter — @1 (Земля: @2; Вода: @3)"
-
+msgid "Clay Crafter @1 (Dirt: @2; Water: @3)"
+msgstr "Изготовитель глины — @1 (Земля: @2; Вода: @3)"

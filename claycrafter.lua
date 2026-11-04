@@ -71,7 +71,7 @@ local jc_special_water_cans = {
 }
 
 local water_container_returns = {
-	["claycrafter:glass_of_water"] = {
+	["jc_claycrafter:glass_of_water"] = {
 		return_item = "vessels:drinking_glass",
 		water = 1,
 	},
@@ -151,7 +151,7 @@ local function allow_metadata_inventory_put(pos, listname, index, stack, player)
 	if listname == "fuel" then -- "Water"
 		if get_fuel_time(stack) > 0 then
 			if inv:is_empty("src") then
-				meta:set_string("infotext", S("Claycrafter is empty") )
+				meta:set_string("infotext", S("Clay Crafter is empty") )
 			end
 			return stack:get_count()
 		else
@@ -184,8 +184,8 @@ end
 -- Node definitions
 --
 
-core.register_node("claycrafter:claycrafter", {
-	description = S("Claycrafter"),
+core.register_node("jc_claycrafter:claycrafter", {
+	description = S("Clay Crafter"),
 	tiles = {
 		"claycrafter_claycrafter_top.png", "claycrafter_claycrafter_bottom.png",
 		"claycrafter_claycrafter_side.png", "claycrafter_claycrafter_side.png",
@@ -204,8 +204,8 @@ core.register_node("claycrafter:claycrafter", {
 	allow_metadata_inventory_take = allow_metadata_inventory_take
 })
 
-core.register_node("claycrafter:claycrafter_active", {
-	description = "Claycrafter",
+core.register_node("jc_claycrafter:claycrafter_active", {
+	description = S("Clay Crafter"),
 	tiles = {
 		"claycrafter_claycrafter_top.png", "claycrafter_claycrafter_bottom.png",
 		"claycrafter_claycrafter_side.png", "claycrafter_claycrafter_back.png",
@@ -223,7 +223,7 @@ core.register_node("claycrafter:claycrafter_active", {
 	},
 	paramtype2 = "facedir",
 	light_source = 8,
-	drop = "claycrafter:claycrafter",
+	drop = "jc_claycrafter:claycrafter",
 	groups = {choppy = 1, oddly_breakable_by_hand = 1, not_in_creative_inventory = 1},
 	legacy_facedir_simple = true,
 	is_ground_content = false,
@@ -250,7 +250,7 @@ local function swap_node(pos, name)
 end
 
 core.register_abm({
-	nodenames = {"claycrafter:claycrafter", "claycrafter:claycrafter_active"},
+	nodenames = {"jc_claycrafter:claycrafter", "jc_claycrafter:claycrafter_active"},
 	interval = 1.0,
 	chance = 1,
 	action = function(pos, node, active_object_count, active_object_count_wider)
@@ -290,7 +290,7 @@ core.register_abm({
 				cookable = false
 			end
 		else
-			if inv:get_stack("src", 1):get_name() ~= "claycrafter:compressed_dirt" then
+			if inv:get_stack("src", 1):get_name() ~= "jc_claycrafter:compressed_dirt" then
 				cookable = false
 			end
 		end
@@ -392,15 +392,15 @@ core.register_abm({
 			local fuel_percent = math.floor(fuel_time / fuel_totaltime * 100)
 			fuel_state = S("In use")
 			formspec = active_formspec(fuel_percent, item_percent)
-			swap_node(pos, "claycrafter:claycrafter_active")
+			swap_node(pos, "jc_claycrafter:claycrafter_active")
 		else
 			if get_fuel_time(fuellist[1]) > 0 then
 				fuel_state = S("Yes")
 			end
-			swap_node(pos, "claycrafter:claycrafter")
+			swap_node(pos, "jc_claycrafter:claycrafter")
 		end
 
-		local infotext = S("Claycrafter @1 (Dirt: @2; Water: @3)", active, item_state, fuel_state)
+		local infotext = S("Clay Crafter @1 (Dirt: @2; Water: @3)", active, item_state, fuel_state)
 
 		--
 		-- Set meta values

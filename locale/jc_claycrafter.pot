@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Content-Type: text/plain; charset=UTF-8\\n"
 "Content-Transfer-Encoding: 8bit\\n"
-"Project-Id-Version: claycrafter\\n"
+"Project-Id-Version: jc_claycrafter\\n"
 ""Plural-Forms: nplurals=2; plural=(n != 1);\\n"
 
 msgid "Compressed Dirt"
@@ -11,10 +11,10 @@ msgstr ""
 msgid "Glass of Water"
 msgstr ""
 
-msgid "Claycrafter"
+msgid "Clay Crafter"
 msgstr ""
 
-msgid "Claycrafter is empty"
+msgid "Clay Crafter is empty"
 msgstr ""
 
 msgid "Empty"
@@ -35,6 +35,6 @@ msgstr ""
 msgid "active"
 msgstr ""
 
-msgid "Claycrafter @1 (Dirt: @2; Water: @3)"
+msgid "Clay Crafter @1 (Dirt: @2; Water: @3)"
 msgstr ""
 

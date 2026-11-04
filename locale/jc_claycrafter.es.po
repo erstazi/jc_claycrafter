@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Content-Type: text/plain; charset=UTF-8\\n"
 "Content-Transfer-Encoding: 8bit\\n"
-"Project-Id-Version: claycrafter\\n"
+"Project-Id-Version: jc_claycrafter\\n"
 ""Language: es\\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\\n"
 
@@ -12,11 +12,11 @@ msgstr "Tierra compactada"
 msgid "Glass of Water"
 msgstr "Vaso de agua"
 
-msgid "Claycrafter"
-msgstr "Claycrafter"
+msgid "Clay Crafter"
+msgstr "Fabricador de arcilla"
 
-msgid "Claycrafter is empty"
-msgstr "El Claycrafter está vacío"
+msgid "Clay Crafter is empty"
+msgstr "El Fabricador de arcilla está vacío"
 
 msgid "Empty"
 msgstr "Vacío"
@@ -36,6 +36,5 @@ msgstr "inactivo"
 msgid "active"
 msgstr "activo"
 
-msgid "Claycrafter @1 (Dirt: @2; Water: @3)"
-msgstr "Claycrafter @1 (Tierra: @2; Agua: @3)"
-
+msgid "Clay Crafter @1 (Dirt: @2; Water: @3)"
+msgstr "Fabricador de arcilla @1 (Tierra: @2; Agua: @3)"
