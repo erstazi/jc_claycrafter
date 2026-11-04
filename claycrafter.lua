@@ -19,12 +19,17 @@ local function active_formspec(fuel_percent, item_percent)
 		"list[current_name;vessels;0,1.5;2,2;]"..
 		"list[current_player;main;0,4.25;8,1;]"..
 		"list[current_player;main;0,5.5;8,3;8]"..
-		"listring[current_name;dst]"..
+
+		"listring[current_player;main]"..
+		"listring[current_name;input]"..
+		"listring[current_player;main]"..
+		"listring[current_name;fuel]"..
 		"listring[current_player;main]"..
 		"listring[current_name;src]"..
 		"listring[current_player;main]"..
-		"listring[current_name;vessels]"..
+		"listring[current_name;dst]"..
 		"listring[current_player;main]"..
+		"listring[current_name;vessels]"..
 		default.get_hotbar_bg(0, 4.25)
 	return formspec
 end
@@ -42,12 +47,18 @@ local inactive_formspec =
 	"list[current_name;vessels;0,1.5;2,2;]"..
 	"list[current_player;main;0,4.25;8,1;]"..
 	"list[current_player;main;0,5.5;8,3;8]"..
-	"listring[current_name;dst]"..
+
+	"listring[current_player;main]"..
+	"listring[current_name;input]"..
+	"listring[current_player;main]"..
+	"listring[current_name;fuel]"..
 	"listring[current_player;main]"..
 	"listring[current_name;src]"..
 	"listring[current_player;main]"..
-	"listring[current_name;vessels]"..
+	"listring[current_name;dst]"..
 	"listring[current_player;main]"..
+	"listring[current_name;vessels]"..
+
 	default.get_hotbar_bg(0, 4.25)
 
 --
@@ -57,7 +68,7 @@ local inactive_formspec =
 local function can_dig(pos, player)
 	local meta = core.get_meta(pos);
 	local inv = meta:get_inventory()
-	return inv:is_empty("fuel") and inv:is_empty("dst") and inv:is_empty("src") and inv:is_empty("vessels")
+	return inv:is_empty("fuel") and inv:is_empty("dst") and inv:is_empty("src") and inv:is_empty("vessels") and inv:is_empty("input")
 end
 
 ----------------------------------------------------------------
@@ -114,6 +125,10 @@ local function get_fuel_time(itemstack)
 	return 0
 end
 
+local function is_compressed_dirt(itemstack)
+	return itemstack:get_name() == "jc_claycrafter:compressed_dirt" or (core.get_modpath("moreblocks") ~= nil and itemstack:get_name() == "moreblocks:dirt_compressed")
+end
+
 local function consume_can_charge(itemstack)
 	local capacity = jc_special_water_cans[itemstack:get_name()]
 	local level = get_can_level(itemstack)
@@ -148,7 +163,18 @@ local function allow_metadata_inventory_put(pos, listname, index, stack, player)
 	end
 	local meta = core.get_meta(pos)
 	local inv = meta:get_inventory()
-	if listname == "fuel" then -- "Water"
+	if listname == "input" then
+		if get_fuel_time(stack) > 0 then
+			if inv:room_for_item("fuel", stack) then
+				return stack:get_count()
+			end
+		elseif is_compressed_dirt(stack) then
+			if inv:room_for_item("src", stack) then
+				return stack:get_count()
+			end
+		end
+		return 0
+	elseif listname == "fuel" then -- "Water"
 		if get_fuel_time(stack) > 0 then
 			if inv:is_empty("src") then
 				meta:set_string("infotext", S("Clay Crafter is empty") )
@@ -158,7 +184,11 @@ local function allow_metadata_inventory_put(pos, listname, index, stack, player)
 			return 0
 		end
 	elseif listname == "src" then
-		return stack:get_count()
+		if stack:get_name() == "jc_claycrafter:compressed_dirt" or
+				(core.get_modpath("moreblocks") ~= nil and stack:get_name() == "moreblocks:dirt_compressed") then
+			return stack:get_count()
+		end
+		return 0
 	elseif listname == "dst" then
 		return 0
 	elseif listname == "vessels" then
@@ -166,11 +196,41 @@ local function allow_metadata_inventory_put(pos, listname, index, stack, player)
 	end
 end
 
+local function on_metadata_inventory_put(pos, listname, index, stack, player)
+	if listname ~= "input" then
+		return
+	end
+
+	local meta = core.get_meta(pos)
+	local inv = meta:get_inventory()
+	local target_list
+
+	if get_fuel_time(stack) > 0 then
+		target_list = "fuel"
+	elseif is_compressed_dirt(stack) then
+		target_list = "src"
+	end
+
+	if target_list then
+		local leftover = inv:add_item(target_list, stack)
+		inv:set_stack("input", index, leftover)
+	end
+end
+
 local function allow_metadata_inventory_move(pos, from_list, from_index, to_list, to_index, count, player)
+	if core.is_protected(pos, player:get_player_name()) then
+		return 0
+	end
+
 	local meta = core.get_meta(pos)
 	local inv = meta:get_inventory()
 	local stack = inv:get_stack(from_list, from_index)
-	return allow_metadata_inventory_put(pos, to_list, to_index, stack, player)
+
+	if to_list == "fuel" or to_list == "src" then
+		return allow_metadata_inventory_put(pos, to_list, to_index, stack, player)
+	end
+
+	return 0
 end
 
 local function allow_metadata_inventory_take(pos, listname, index, stack, player)
@@ -201,7 +261,8 @@ core.register_node("jc_claycrafter:claycrafter", {
 
 	allow_metadata_inventory_put = allow_metadata_inventory_put,
 	allow_metadata_inventory_move = allow_metadata_inventory_move,
-	allow_metadata_inventory_take = allow_metadata_inventory_take
+	allow_metadata_inventory_take = allow_metadata_inventory_take,
+	on_metadata_inventory_put = on_metadata_inventory_put,
 })
 
 core.register_node("jc_claycrafter:claycrafter_active", {
@@ -233,7 +294,8 @@ core.register_node("jc_claycrafter:claycrafter_active", {
 
 	allow_metadata_inventory_put = allow_metadata_inventory_put,
 	allow_metadata_inventory_move = allow_metadata_inventory_move,
-	allow_metadata_inventory_take = allow_metadata_inventory_take
+	allow_metadata_inventory_take = allow_metadata_inventory_take,
+	on_metadata_inventory_put = on_metadata_inventory_put,
 })
 
 --
@@ -270,7 +332,8 @@ core.register_abm({
 				src = 1,
 				fuel = 1,
 				dst = 6,
-				vessels = 4
+				vessels = 4,
+				input = 1
 		}) do
 			if inv:get_size(listname) ~= size then
 				inv:set_size(listname, size)
