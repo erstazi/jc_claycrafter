@@ -3,7 +3,7 @@
 --
 
 local function active_formspec(fuel_percent, item_percent)
-	local formspec = 
+	local formspec =
 		"size[8,8.5]"..
 		default.gui_bg..
 		default.gui_bg_img..
@@ -54,19 +54,19 @@ local inactive_formspec =
 --
 
 local function can_dig(pos, player)
-	local meta = minetest.get_meta(pos);
+	local meta = core.get_meta(pos);
 	local inv = meta:get_inventory()
 	return inv:is_empty("fuel") and inv:is_empty("dst") and inv:is_empty("src") and inv:is_empty("vessels")
 end
 
 local function allow_metadata_inventory_put(pos, listname, index, stack, player)
-	if minetest.is_protected(pos, player:get_player_name()) then
+	if core.is_protected(pos, player:get_player_name()) then
 		return 0
 	end
-	local meta = minetest.get_meta(pos)
+	local meta = core.get_meta(pos)
 	local inv = meta:get_inventory()
 	if listname == "fuel" then -- "Water"
-		if minetest.get_item_group(stack:get_name(), "h2o") > 0 then
+		if core.get_item_group(stack:get_name(), "h2o") > 0 then
 			if inv:is_empty("src") then
 				meta:set_string("infotext", "Claycrafter is empty")
 			end
@@ -84,14 +84,14 @@ local function allow_metadata_inventory_put(pos, listname, index, stack, player)
 end
 
 local function allow_metadata_inventory_move(pos, from_list, from_index, to_list, to_index, count, player)
-	local meta = minetest.get_meta(pos)
+	local meta = core.get_meta(pos)
 	local inv = meta:get_inventory()
 	local stack = inv:get_stack(from_list, from_index)
 	return allow_metadata_inventory_put(pos, to_list, to_index, stack, player)
 end
 
 local function allow_metadata_inventory_take(pos, listname, index, stack, player)
-	if minetest.is_protected(pos, player:get_player_name()) then
+	if core.is_protected(pos, player:get_player_name()) then
 		return 0
 	end
 	return stack:get_count()
@@ -101,7 +101,7 @@ end
 -- Node definitions
 --
 
-minetest.register_node("claycrafter:claycrafter", {
+core.register_node("claycrafter:claycrafter", {
 	description = "Claycrafter",
 	tiles = {
 		"claycrafter_claycrafter_top.png", "claycrafter_claycrafter_bottom.png",
@@ -113,15 +113,15 @@ minetest.register_node("claycrafter:claycrafter", {
 	legacy_facedir_simple = true,
 	is_ground_content = false,
 	sounds = default.node_sound_stone_defaults(),
-	
+
 	can_dig = can_dig,
-	
+
 	allow_metadata_inventory_put = allow_metadata_inventory_put,
 	allow_metadata_inventory_move = allow_metadata_inventory_move,
 	allow_metadata_inventory_take = allow_metadata_inventory_take
 })
 
-minetest.register_node("claycrafter:claycrafter_active", {
+core.register_node("claycrafter:claycrafter_active", {
 	description = "Claycrafter",
 	tiles = {
 		"claycrafter_claycrafter_top.png", "claycrafter_claycrafter_bottom.png",
@@ -145,9 +145,9 @@ minetest.register_node("claycrafter:claycrafter_active", {
 	legacy_facedir_simple = true,
 	is_ground_content = false,
 	sounds = default.node_sound_stone_defaults(),
-	
+
 	can_dig = can_dig,
-	
+
 	allow_metadata_inventory_put = allow_metadata_inventory_put,
 	allow_metadata_inventory_move = allow_metadata_inventory_move,
 	allow_metadata_inventory_take = allow_metadata_inventory_take
@@ -158,15 +158,15 @@ minetest.register_node("claycrafter:claycrafter_active", {
 --
 
 local function swap_node(pos, name)
-	local node = minetest.get_node(pos)
+	local node = core.get_node(pos)
 	if node.name == name then
 		return
 	end
 	node.name = name
-	minetest.swap_node(pos, node)
+	core.swap_node(pos, node)
 end
 
-minetest.register_abm({
+core.register_abm({
 	nodenames = {"claycrafter:claycrafter", "claycrafter:claycrafter_active"},
 	interval = 1.0,
 	chance = 1,
@@ -174,11 +174,11 @@ minetest.register_abm({
 		--
 		-- Inizialize metadata
 		--
-		local meta = minetest.get_meta(pos)
+		local meta = core.get_meta(pos)
 		local fuel_time = meta:get_float("fuel_time") or 0
 		local src_time = meta:get_float("src_time") or 0
 		local fuel_totaltime = meta:get_float("fuel_totaltime") or 0
-		
+
 		--
 		-- Inizialize inventory
 		--
@@ -196,16 +196,16 @@ minetest.register_abm({
 		local srclist = inv:get_list("src")
 		local fuellist = inv:get_list("fuel")
 		local dstlist = inv:get_list("dst")
-		
+
 		--
 		-- Cooking
 		--
-	
-		local cooktime = minetest.get_item_group(inv:get_stack("fuel", 1):get_name(), "h2o")
+
+		local cooktime = core.get_item_group(inv:get_stack("fuel", 1):get_name(), "h2o")
 		local cookable = true
-		
-		
-		if minetest.get_modpath("moreblocks") ~= nil then
+
+
+		if core.get_modpath("moreblocks") ~= nil then
 			if inv:get_stack("src", 1):get_name() ~= "moreblocks:dirt_compressed" then
 				cookable = false
 			end
@@ -214,12 +214,12 @@ minetest.register_abm({
 				cookable = false
 			end
 		end
-		
+
 		-- Check if we have enough fuel to burn
 		if fuel_time < fuel_totaltime then
 			-- The claycrafter is currently active and has enough fuel
 			fuel_time = fuel_time + 1
-			
+
 			-- If there is a cookable item then check if it is ready yet
 			if cookable then
 				src_time = src_time + 1
@@ -240,8 +240,8 @@ minetest.register_abm({
 			-- Furnace ran out of fuel
 			if cookable and inv:room_for_item("dst", ItemStack({name = "default:clay", count = 4})) then
 				-- We need to get new fuel
-				local fueltime = minetest.get_item_group(inv:get_stack("fuel", 1):get_name(), "h2o")
-				
+				local fueltime = core.get_item_group(inv:get_stack("fuel", 1):get_name(), "h2o")
+
 				if fueltime == 0 then
 					-- No valid fuel in fuel list
 					fuel_totaltime = 0
@@ -253,12 +253,12 @@ minetest.register_abm({
 					then
 						inv:remove_item("fuel", inv:get_stack("fuel", 1):get_name())
 						inv:add_item("vessels", {name = "vessels:drinking_glass"})
-					else 
+					else
 						swap_node(pos, "claycrafter:claycrafter_active")
 					end
 					fuel_totaltime = fueltime
 					fuel_time = 0
-					
+
 				end
 			else
 				-- We don't need to get new fuel since there is no cookable item
@@ -267,7 +267,7 @@ minetest.register_abm({
 				src_time = 0
 			end
 		end
-		
+
 		--
 		-- Update formspec, infotext and node
 		--
@@ -284,7 +284,7 @@ minetest.register_abm({
 				item_state = "No water"
 			end
 		end
-		
+
 		local fuel_state = "Empty"
 		local active = "inactive "
 		if fuel_time <= fuel_totaltime and fuel_totaltime ~= 0 then
@@ -299,7 +299,7 @@ minetest.register_abm({
 			end
 			swap_node(pos, "claycrafter:claycrafter")
 		end
-		
+
 		local infotext =  "Claycrafter " .. active .. "(Dirt: " .. item_state .. "; Water: " .. fuel_state .. ")"
 
 		--
