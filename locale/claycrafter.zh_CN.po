@@ -1,0 +1,41 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\\n"
+"Content-Transfer-Encoding: 8bit\\n"
+"Project-Id-Version: claycrafter\\n"
+""Language: zh_CN\\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\\n"
+
+msgid "Compressed Dirt"
+msgstr "压实泥土"
+
+msgid "Glass of Water"
+msgstr "一杯水"
+
+msgid "Claycrafter"
+msgstr "Claycrafter"
+
+msgid "Claycrafter is empty"
+msgstr "Claycrafter 为空"
+
+msgid "Empty"
+msgstr "空"
+
+msgid "Yes"
+msgstr "是"
+
+msgid "No water"
+msgstr "没有水"
+
+msgid "In use"
+msgstr "使用中"
+
+msgid "inactive"
+msgstr "未激活"
+
+msgid "active"
+msgstr "已激活"
+
+msgid "Claycrafter @1 (Dirt: @2; Water: @3)"
+msgstr "Claycrafter（@1；泥土：@2；水：@3）"
+

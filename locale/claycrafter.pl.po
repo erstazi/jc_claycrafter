@@ -1,0 +1,41 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\\n"
+"Content-Transfer-Encoding: 8bit\\n"
+"Project-Id-Version: claycrafter\\n"
+""Language: pl\\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\\n"
+
+msgid "Compressed Dirt"
+msgstr "Sprasowana ziemia"
+
+msgid "Glass of Water"
+msgstr "Szklanka wody"
+
+msgid "Claycrafter"
+msgstr "Claycrafter"
+
+msgid "Claycrafter is empty"
+msgstr "Claycrafter jest pusty"
+
+msgid "Empty"
+msgstr "Puste"
+
+msgid "Yes"
+msgstr "Tak"
+
+msgid "No water"
+msgstr "Brak wody"
+
+msgid "In use"
+msgstr "W użyciu"
+
+msgid "inactive"
+msgstr "nieaktywny"
+
+msgid "active"
+msgstr "aktywny"
+
+msgid "Claycrafter @1 (Dirt: @2; Water: @3)"
+msgstr "Claycrafter — @1 (Ziemia: @2; Woda: @3)"
+

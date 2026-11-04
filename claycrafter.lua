@@ -151,7 +151,7 @@ local function allow_metadata_inventory_put(pos, listname, index, stack, player)
 	if listname == "fuel" then -- "Water"
 		if get_fuel_time(stack) > 0 then
 			if inv:is_empty("src") then
-				meta:set_string("infotext", "Claycrafter is empty")
+				meta:set_string("infotext", S("Claycrafter is empty") )
 			end
 			return stack:get_count()
 		else
@@ -185,7 +185,7 @@ end
 --
 
 core.register_node("claycrafter:claycrafter", {
-	description = "Claycrafter",
+	description = S("Claycrafter"),
 	tiles = {
 		"claycrafter_claycrafter_top.png", "claycrafter_claycrafter_bottom.png",
 		"claycrafter_claycrafter_side.png", "claycrafter_claycrafter_side.png",
@@ -376,31 +376,31 @@ core.register_abm({
 		local item_percent = 0
 		if cookable and cooktime > 0 then
 			item_percent = math.floor(src_time / cooktime * 100)
-			item_state = "Yes"
+			item_state = S("Yes")
 		else
 			if srclist[1]:is_empty() then
-				item_state = "Empty"
+				item_state = S("Empty")
 			else
-				item_state = "No water"
+				item_state = S("No water")
 			end
 		end
 
-		local fuel_state = "Empty"
-		local active = "inactive "
+		local fuel_state = S("Empty")
+		local active = S("inactive")
 		if fuel_time < fuel_totaltime and fuel_totaltime ~= 0 then
-			active = "active "
+			active = S("active")
 			local fuel_percent = math.floor(fuel_time / fuel_totaltime * 100)
-			fuel_state = "In use"
+			fuel_state = S("In use")
 			formspec = active_formspec(fuel_percent, item_percent)
 			swap_node(pos, "claycrafter:claycrafter_active")
 		else
 			if get_fuel_time(fuellist[1]) > 0 then
-				fuel_state = "Yes"
+				fuel_state = S("Yes")
 			end
 			swap_node(pos, "claycrafter:claycrafter")
 		end
 
-		local infotext =  "Claycrafter " .. active .. "(Dirt: " .. item_state .. "; Water: " .. fuel_state .. ")"
+		local infotext = S("Claycrafter @1 (Dirt: @2; Water: @3)", active, item_state, fuel_state)
 
 		--
 		-- Set meta values

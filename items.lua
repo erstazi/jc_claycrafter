@@ -14,7 +14,7 @@ else
 			}
 	})
 	core.register_node("claycrafter:compressed_dirt", {
-		description = "Compressed Dirt",
+		description = S("Compressed Dirt"),
 		tiles = {"claycrafter_compressed_dirt.png"},
 		groups = {crumbly = 1, oddly_breakable_by_hand = 1, soil = 1, cracky =1},
 		sounds = default.node_sound_dirt_defaults(),
@@ -28,7 +28,7 @@ end
 
 --nodes
 core.register_node("claycrafter:glass_of_water", {
-	description = ("Glass of Water"),
+	description = S("Glass of Water"),
 	drawtype = "plantlike",
 	tiles = {"claycrafter_glass_of_water.png"},
 	inventory_image = "claycrafter_glass_of_water_inv.png",
